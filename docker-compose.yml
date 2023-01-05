@@ -26,7 +26,6 @@ services:
       - MONGO_USER=jerry
       - MONGO_PASSWORD=mypassword
       - SESSION_SECRET=REDIS_SECRET
-      # - DB_CLOUD_URI=mongodb+srv://PeerPrep:%40Redapple0917@peerprep-backend.ojaw0uu.mongodb.net/test
     env_file:
       - ./User-Service/.env
     command: npm run dev
