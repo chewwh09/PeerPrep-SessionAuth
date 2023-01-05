@@ -1,0 +1,94 @@
+version: "3"
+services:
+  api-gateway:
+    build: ./Api-gateway
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Api-Gateway/:/app
+      - /app/node_modules
+    env_file:
+      - ./Api-Gateway/.env
+    command: npm run dev
+    depends_on:
+      - redis
+      - activemq
+
+  user-service:
+    build: ./User-Service
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./User-Service/:/app
+      - /app/node_modules
+    environment:
+      - PORT=8001
+      - MONGO_USER=jerry
+      - MONGO_PASSWORD=mypassword
+      - SESSION_SECRET=REDIS_SECRET
+      # - DB_CLOUD_URI=mongodb+srv://PeerPrep:%40Redapple0917@peerprep-backend.ojaw0uu.mongodb.net/test
+    env_file:
+      - ./User-Service/.env
+    command: npm run dev
+    depends_on:
+      - mongo
+      - redis
+
+  matching-service:
+    build: ./Matching-Service
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./Matching-Service/:/app
+      - /app/node_modules
+    env_file:
+      - ./Matching-Service/.env
+    command: npm run dev
+    depends_on:
+      - mongo
+      - redis
+
+  question-service:
+    build: ./Question-Service
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./Question-Service/:/app
+      - /app/node_modules
+    env_file:
+      - ./Question-Service/.env
+    command: npm run dev
+    depends_on:
+      - mongo
+      - redis
+
+  history-service:
+    build: ./History-Service
+    ports:
+      - "8004:8004"
+    volumes:
+      - ./History-Service/:/app
+      - /app/node_modules
+    env_file:
+      - ./History-Service/.env
+    command: npm run dev
+    depends_on:
+      - mongo
+      - redis
+
+  mongo:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=jerry
+      - MONGO_INITDB_ROOT_PASSWORD=mypassword
+    volumes:
+      - mongo-db:/data/db
+
+  redis:
+    image: redis
+
+  activemq:
+    image: rmohr/activemq
+
+volumes:
+  mongo-db:
